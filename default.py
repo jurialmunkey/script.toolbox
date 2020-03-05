@@ -8,7 +8,7 @@ from resources.lib.Utils import *
 ADDON = xbmcaddon.Addon()
 ADDON_VERSION = ADDON.getAddonInfo('version')
 ADDON_LANGUAGE = ADDON.getLocalizedString
-ADDON_PATH = ADDON.getAddonInfo('path').decode("utf-8")
+ADDON_PATH = ADDON.getAddonInfo('path')
 EXTRAFANART_LIMIT = 4
 EXTRATHUMB_LIMIT = 4
 HOME = xbmcgui.Window(10000)

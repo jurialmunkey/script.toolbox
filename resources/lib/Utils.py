@@ -3,7 +3,7 @@ import xbmcaddon
 import xbmcgui
 import xbmcvfs
 import os
-import simplejson
+import json
 import hashlib
 import urllib
 from PIL import Image, ImageOps
@@ -46,7 +46,7 @@ def open_info_panel():
 def AddArtToLibrary(type, media, folder, limit, silent=False):
     json_query = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "VideoLibrary.Get%ss", "params": {"properties": ["art", "file"], "sort": { "method": "label" } }, "id": 1}' % media.lower())
     json_query = unicode(json_query, 'utf-8', errors='ignore')
-    json_response = simplejson.loads(json_query)
+    json_response = json.loads(json_query)
     if (json_response['result'] is not None) and ('%ss' % (media.lower()) in json_response['result']):
         # iterate through the results
         if not silent:
@@ -114,7 +114,7 @@ def import_skinsettings():
 
 
 def export_skinsettings(filter_label=False):
-    s_path = xbmc.translatePath('special://profile/addon_data/%s/settings.xml' % xbmc.getSkinDir()).decode("utf-8")
+    s_path = xbmc.translatePath('special://profile/addon_data/%s/settings.xml' % xbmc.getSkinDir())
     if not xbmcvfs.exists(s_path):
         xbmcgui.Dialog().ok(ADDON_LANGUAGE(32007), ADDON_LANGUAGE(32008))
         log("settings.xml not found")
@@ -255,7 +255,7 @@ def save_to_file(content, filename, path=""):
         text_file_path = os.path.join(path, filename + ".txt")
     log("save to textfile: " + text_file_path)
     text_file = xbmcvfs.File(text_file_path, "w")
-    simplejson.dump(content, text_file)
+    json.dump(content, text_file)
     text_file.close()
     return True
 
@@ -265,7 +265,7 @@ def read_from_file(path=""):
         path = get_browse_dialog(dlg_type=1)
     if xbmcvfs.exists(path):
         f = open(path)
-        fc = simplejson.load(f)
+        fc = json.load(f)
         log("loaded textfile " + path)
         return fc
     else:
@@ -379,7 +379,7 @@ def GetSortLetters(path, focusedletter):
         if path:
             json_query = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Files.GetDirectory", "params": {"directory": "%s", "media": "files"}, "id": 1}' % (path))
             json_query = unicode(json_query, 'utf-8', errors='ignore')
-            json_response = simplejson.loads(json_query)
+            json_response = json.loads(json_query)
             if "result" in json_response and "files" in json_response["result"]:
                 for movie in json_response["result"]["files"]:
                     sortletter = movie["label"].replace("The ", "")[0]
@@ -426,7 +426,7 @@ def GetFavourites():
     items = []
     json_query = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Favourites.GetFavourites", "params": {"type": null, "properties": ["path", "thumbnail", "window", "windowparameter"]}, "id": 1}')
     json_query = unicode(json_query, 'utf-8', errors='ignore')
-    json_query = simplejson.loads(json_query)
+    json_query = json.loads(json_query)
     if json_query["result"]["limits"]["total"] > 0:
         for fav in json_query["result"]["favourites"]:
             path = GetFavPath(fav)
@@ -440,10 +440,8 @@ def GetFavourites():
 
 
 def log(txt):
-    if isinstance(txt, str):
-        txt = txt.decode("utf-8")
     message = u'%s: %s' % (ADDON_ID, txt)
-    xbmc.log(msg=message.encode("utf-8"), level=xbmc.LOGDEBUG)
+    xbmc.log(msg=message, level=xbmc.LOGDEBUG)
 
 
 def get_browse_dialog(default="", heading="Browse", dlg_type=3, shares="files", mask="", use_thumbs=False, treat_as_folder=False):
@@ -457,7 +455,7 @@ def Notify(header, line='', line2='', line3=''):
 
 
 def prettyprint(string):
-    log(simplejson.dumps(string, sort_keys=True, indent=4, separators=(',', ': ')))
+    log(json.dumps(string, sort_keys=True, indent=4, separators=(',', ': ')))
 
 
 def passHomeDataToSkin(data, debug=False):
