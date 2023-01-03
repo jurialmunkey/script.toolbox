@@ -13,7 +13,7 @@ from xml.dom.minidom import parse
 ADDON = xbmcaddon.Addon()
 ADDON_ID = ADDON.getAddonInfo('id')
 ADDON_LANGUAGE = ADDON.getLocalizedString
-ADDON_DATA_PATH = os.path.join(xbmc.translatePath("special://profile/addon_data/%s" % ADDON_ID))
+ADDON_DATA_PATH = os.path.join(xbmcvfs.translatePath("special://profile/addon_data/%s" % ADDON_ID))
 HOME = xbmcgui.Window(10000)
 SKINSETTINGS = xbmcgui.Window(10035)
 
@@ -100,7 +100,7 @@ def import_skinsettings():
             progressDialog.update((count * 100) / len(data), ADDON_LANGUAGE(32011) + ' %s' % skinsetting[1])
             setting = skinsetting[1].replace(xbmc.getSkinDir() + ".", "")
             if skinsetting[0] == "string":
-                if skinsetting[2] is not "":
+                if skinsetting[2] != "":
                     xbmc.executebuiltin("Skin.SetString(%s,%s)" % (setting, skinsetting[2]))
                 else:
                     xbmc.executebuiltin("Skin.Reset(%s)" % setting)
@@ -114,7 +114,7 @@ def import_skinsettings():
 
 
 def export_skinsettings(filter_label=False):
-    s_path = xbmc.translatePath('special://profile/addon_data/%s/settings.xml' % xbmc.getSkinDir())
+    s_path = xbmcvfs.translatePath('special://profile/addon_data/%s/settings.xml' % xbmc.getSkinDir())
     if not xbmcvfs.exists(s_path):
         xbmcgui.Dialog().ok(ADDON_LANGUAGE(32007), ADDON_LANGUAGE(32008))
         log("settings.xml not found")
@@ -152,11 +152,11 @@ def Filter_Image(filterimage, radius):
                 try:
                     if xbmcvfs.exists(xbmc_cache_file):
                         log("image already in xbmc cache: " + xbmc_cache_file)
-                        img = Image.open(xbmc.translatePath(xbmc_cache_file))
+                        img = Image.open(xbmcvfs.translatePath(xbmc_cache_file))
                         break
                     elif xbmcvfs.exists(xbmc_vid_cache_file):
                         log("image already in xbmc video cache: " + xbmc_vid_cache_file)
-                        img = Image.open(xbmc.translatePath(xbmc_vid_cache_file))
+                        img = Image.open(xbmcvfs.translatePath(xbmc_vid_cache_file))
                         break
                     else:
                         filterimage = urllib.unquote(filterimage.replace("image://", "")).decode('utf8')
